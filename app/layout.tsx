@@ -4,6 +4,7 @@ import localFont from "next/font/local";
 import { AOS } from "./components/global";
 import { Montserrat } from "next/font/google";
 import type { Metadata, Viewport } from "next";
+import { Inter } from "next/font/google";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -22,6 +23,8 @@ const montserrat = Montserrat({
   weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"],
 });
 
+const inter = Inter({ subsets: ["latin"] });
+
 export const viewport: Viewport = {
   maximumScale: 1,
 };
@@ -29,11 +32,11 @@ export const viewport: Viewport = {
 export const metadata: Metadata = {
   metadataBase: new URL("https://nextapptemplate.xyz"),
   icons: {
-    icon: "/icon.png",
+    icon: "/vultisig-logo.svg",
   },
-  title: "nextjs template",
+  title: "Vultisig - Secure Multi-Signature Platform",
   description:
-    "I fell in love with next.js, im trying to make a template for it also",
+    "Experience the next generation of secure digital asset management with Vultisig's advanced multi-signature technology.",
   applicationName: "next Web Application",
   authors: [{ name: "nextapp template", url: "https://domainname.host" }],
   keywords: ["NextJs", "reactjs", "template", "typescript"],
@@ -86,13 +89,13 @@ export const metadata: Metadata = {
 
 export default function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
+}) {
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${montserrat.className} ${geistMono.variable} antialiased`}
+        className={`${geistSans.variable} ${montserrat.className} ${geistMono.variable} antialiased ${inter.className}`}
       >
         <Toaster richColors />
         <AOS />

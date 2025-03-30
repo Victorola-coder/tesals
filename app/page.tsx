@@ -14,16 +14,27 @@ import {
   TextArea,
   Toggle,
 } from "./components/ui";
-import { motion } from "framer-motion";
+import { motion, useScroll, useTransform } from "framer-motion";
 import { EyeIcon } from "./components/svgs";
 import { toast } from "sonner";
 import { Animation, Glow, Loader } from "./components/global";
+import ImageNext from "next/image";
+import { useRef } from "react";
 
 export default function Home() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [toggleState, setToggleState] = useState(false);
   const [inputValue, setInputValue] = useState("");
   const [textAreaValue, setTextAreaValue] = useState("");
+
+  const containerRef = useRef(null);
+  const { scrollYProgress } = useScroll({
+    target: containerRef,
+    offset: ["start start", "end end"],
+  });
+
+  const opacity = useTransform(scrollYProgress, [0, 0.5], [1, 0]);
+  const scale = useTransform(scrollYProgress, [0, 0.5], [1, 0.8]);
 
   const tabs = [
     { label: "Overview", value: "overview" },
@@ -38,401 +49,266 @@ export default function Home() {
   ];
 
   return (
-    <Animation>
-      <div className="min-h-screen bg-[#0f0f0f] p-8">
-        <div className="max-w-6xl mx-auto space-y-12">
-          {/* Header */}
+    <main className="relative min-h-screen bg-vultisig-bg-primary text-white selection:bg-vultisig-turquoise selection:text-vultisig-bg-primary">
+      {/* Animated Background */}
+      <div className="fixed inset-0 z-0">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-from)_0%,_transparent_70%)] from-vultisig-persian/20"></div>
+        <div className="absolute inset-0">
+          {[...Array(3)].map((_, i) => (
+            <div
+              key={i}
+              className="absolute h-[30vh] w-[30vh] rounded-full blur-[100px]"
+              style={{
+                background:
+                  i === 0 ? "#33E6BF" : i === 1 ? "#2155DF" : "#0439C7",
+                top: `${Math.random() * 100}%`,
+                left: `${Math.random() * 100}%`,
+                opacity: 0.15,
+                animation: `float ${10 + i * 5}s infinite ease-in-out`,
+                animationDelay: `${i * -5}s`,
+              }}
+            />
+          ))}
+        </div>
+      </div>
 
-          <div className="text-center space-y-6 mb-16">
+      {/* Hero Section */}
+      <section
+        ref={containerRef}
+        className="relative min-h-screen flex items-center justify-center overflow-hidden"
+      >
+        <motion.div
+          style={{ opacity, scale }}
+          className="container mx-auto px-4 pt-20"
+        >
+          <div className="max-w-5xl mx-auto">
+            {/* Logo and Main Content */}
             <motion.div
-              initial={{ scale: 0.9, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              transition={{ duration: 0.5 }}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8 }}
+              className="text-center relative"
             >
-              <h1 className="text-5xl font-bold text-white font-geistSans">
-                UI Components
+              {/* Glowing Logo */}
+              <div className="relative w-24 h-24 mx-auto mb-12">
+                <div className="absolute inset-0 bg-vultisig-turquoise rounded-full blur-[60px] opacity-30 animate-pulse"></div>
+                <Image
+                  src="/vultisig-logo.svg"
+                  alt="Vultisig"
+                  fill
+                  className="object-contain relative z-10"
+                />
+              </div>
+
+              {/* Headline with Gradient Animation */}
+              <h1 className="relative text-6xl sm:text-7xl font-bold mb-6 leading-tight">
+                <span className="inline-block animate-gradient-x bg-gradient-to-r from-vultisig-turquoise via-vultisig-persian to-vultisig-gradient-to bg-[length:200%_auto] bg-clip-text text-transparent">
+                  The Future of
+                </span>
+                <br />
+                <span className="relative inline-block text-white">
+                  Multi-Signature
+                  <div className="absolute -bottom-2 left-0 w-full h-1 bg-gradient-to-r from-vultisig-turquoise to-vultisig-persian transform scale-x-0 animate-expand-line"></div>
+                </span>
               </h1>
-              <p className="text-[#FFFFFF80] mt-4 max-w-2xl mx-auto">
-                A modern, accessible, and fully-featured component library built
-                with Next.js, Tailwind CSS, and TypeScript
-              </p>
+
+              <motion.p
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.8, delay: 0.2 }}
+                className="text-xl sm:text-2xl text-gray-400 mb-12 max-w-3xl mx-auto leading-relaxed"
+              >
+                Experience unparalleled security with next-gen multi-signature
+                technology.
+                <br className="hidden sm:block" />
+                <span className="text-vultisig-turquoise">
+                  No complexity, just pure innovation.
+                </span>
+              </motion.p>
+
+              {/* Interactive CTA */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.8, delay: 0.4 }}
+                className="flex flex-col sm:flex-row items-center justify-center gap-6"
+              >
+                <button className="group relative px-8 py-4 bg-gradient-to-r from-vultisig-turquoise to-vultisig-persian rounded-xl overflow-hidden">
+                  <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300"></div>
+                  <span className="relative font-semibold text-lg text-vultisig-bg-primary">
+                    Get Started Free
+                  </span>
+                </button>
+
+                <a
+                  href="#features"
+                  className="group flex items-center gap-2 text-gray-400 hover:text-white transition-colors"
+                >
+                  <span className="font-medium">Explore Features</span>
+                  <svg
+                    className="w-5 h-5 transform group-hover:translate-x-1 transition-transform"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M17 8l4 4m0 0l-4 4m4-4H3"
+                    />
+                  </svg>
+                </a>
+              </motion.div>
+
+              {/* Trust Indicators */}
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.8, delay: 0.6 }}
+                className="mt-16 grid grid-cols-2 sm:grid-cols-4 gap-8 max-w-3xl mx-auto"
+              >
+                {trustStats.map((stat, index) => (
+                  <div key={index} className="text-center">
+                    <div className="text-2xl sm:text-3xl font-bold mb-2 bg-gradient-to-r from-vultisig-turquoise to-vultisig-persian bg-clip-text text-transparent">
+                      {stat.value}
+                    </div>
+                    <div className="text-sm text-gray-400">{stat.label}</div>
+                  </div>
+                ))}
+              </motion.div>
             </motion.div>
-
-            <div className="flex gap-4 justify-center">
-              <Button
-                variant="primary"
-                onClick={() => toast.success("Copied to clipboard!")}
-              >
-                Get Started
-              </Button>
-              <Button
-                variant="secondary"
-                onClick={() =>
-                  window.open(
-                    "https://github.com/victorola-coder/next-template"
-                  )
-                }
-              >
-                View on GitHub
-              </Button>
-            </div>
           </div>
+        </motion.div>
 
-          {/* Tabs Navigation */}
-          <Tabs
-            tabs={tabs}
-            defaultValue="components"
-            className="justify-center"
-          />
+        {/* Scroll Indicator */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 1, duration: 0.8 }}
+          className="absolute bottom-8 left-1/2 transform -translate-x-1/2 flex flex-col items-center gap-2"
+        >
+          <span className="text-sm text-gray-400">Scroll to explore</span>
+          <div className="w-5 h-8 border-2 border-gray-400 rounded-full p-1">
+            <div className="w-1 h-1 bg-gray-400 rounded-full mx-auto animate-scroll-down"></div>
+          </div>
+        </motion.div>
+      </section>
 
-          {/* Components Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            {/* Buttons Section */}
-            <Glow className="p-6 space-y-4">
-              <h2 className="text-xl font-semibold text-white mb-4">Buttons</h2>
-              <div className="flex flex-row flex-wrap gap-4">
-                <Button variant="default">Default Button</Button>
-                <Button variant="primary">Primary Button</Button>
-                <Button variant="secondary">Secondary Button</Button>
-                <Button variant="danger">Danger Button</Button>
-                <Button variant="google">Google Button</Button>
-                <Button loading>Loading Button</Button>
-              </div>
-            </Glow>
-            {/* Loading States */}
-            <Glow className="p-6 space-y-4">
-              <h2 className="text-xl font-semibold text-white mb-4">Loaders</h2>
-              <div className="grid grid-cols-3 gap-4">
-                <div className="flex flex-col items-center gap-2">
-                  <Loader size="small" />
-                  <span className="text-sm text-[#FFFFFF80]">Small</span>
-                </div>
-                <div className="flex flex-col items-center gap-2">
-                  <Loader size="medium" />
-                  <span className="text-sm text-[#FFFFFF80]">Medium</span>
-                </div>
-                <div className="flex flex-col items-center gap-2">
-                  <Loader size="large" />
-                  <span className="text-sm text-[#FFFFFF80]">Large</span>
-                </div>
-              </div>
-            </Glow>
+      {/* Features Section */}
+      <section id="features" className="relative py-32">
+        <div className="container mx-auto px-4">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8 }}
+            className="text-center mb-20"
+          >
+            <h2 className="text-5xl font-bold mb-6">
+              <span className="bg-gradient-to-r from-vultisig-turquoise to-vultisig-persian bg-clip-text text-transparent">
+                Why Choose Vultisig?
+              </span>
+            </h2>
+            <p className="text-xl text-gray-400 max-w-2xl mx-auto">
+              Built for the future, designed for today
+            </p>
+          </motion.div>
 
-            {/* Icons & SVGs */}
-            <Glow className="p-6 space-y-4">
-              <h2 className="text-xl font-semibold text-white mb-4">
-                Icons & SVGs
-              </h2>
-              <div className="grid grid-cols-4 gap-4">
-                <div className="flex flex-col items-center gap-2">
-                  <EyeIcon className="w-6 h-6" fill="white" />
-                  <span className="text-sm text-[#FFFFFF80]">Eye</span>
-                </div>
-                {/* Add more icons here */}
-              </div>
-            </Glow>
-            {/* Form Inputs Section */}
-            <Glow className="p-6 space-y-4">
-              <h2 className="text-xl font-semibold text-white mb-4">Inputs</h2>
-              <Input
-                placeholder="Regular Input"
-                value={inputValue}
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                  setInputValue(e.target.value)
-                }
-              />
-              <Input
-                type="password"
-                placeholder="Password Input"
-                value={inputValue}
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                  setInputValue(e.target.value)
-                }
-              />
-              <TextArea
-                name="textarea"
-                value={textAreaValue}
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                  setTextAreaValue(e.target.value)
-                }
-                placeholder="Text Area Input"
-              />
-            </Glow>
-
-            {/* Form Validation */}
-            <Glow className="p-6 space-y-4">
-              <h2 className="text-xl font-semibold text-white mb-4">
-                Form Validation
-              </h2>
-              <form
-                onSubmit={(e) => {
-                  e.preventDefault();
-                  toast.success("Form submitted!");
-                }}
-                className="space-y-4"
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+            {features.map((feature, index) => (
+              <motion.div
+                key={index}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.8, delay: index * 0.2 }}
+                className="group relative p-8 rounded-2xl bg-gradient-to-b from-vultisig-bg-secondary/50 to-transparent backdrop-blur-sm border border-white/5 hover:border-vultisig-turquoise/30 transition-all duration-300"
               >
-                <Input
-                  placeholder="Email"
-                  type="email"
-                  error="Please enter a valid email"
-                />
-                <Input
-                  placeholder="Password"
-                  type="password"
-                  error="Password is required"
-                />
-                <Button type="submit" className="w-full">
-                  Submit
-                </Button>
-              </form>
-            </Glow>
-
-            {/* Toggle & Select Section */}
-            <Glow className="p-6 space-y-4">
-              <h2 className="text-xl font-semibold text-white mb-4">
-                Interactive Components
-              </h2>
-              <div className="space-y-6">
-                <div className="flex items-center justify-between">
-                  <span className="text-white">Toggle Component</span>
-                  <Toggle checked={toggleState} onChange={setToggleState} />
-                </div>
-                <Select
-                  options={selectOptions}
-                  placeholder="Select an option"
-                  onChange={(value) => console.log(value)}
-                />
-              </div>
-            </Glow>
-            {/* Animations */}
-            <Glow className="p-6 space-y-4">
-              <h2 className="text-xl font-semibold text-white mb-4">
-                Animations
-              </h2>
-              <div className="space-y-4">
-                <motion.div
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  className="bg-[#283142] p-4 rounded-lg text-white text-center"
-                >
-                  Hover & Tap Animation
-                </motion.div>
-                <motion.div
-                  animate={{
-                    y: [0, -10, 0],
-                  }}
-                  transition={{
-                    duration: 2,
-                    repeat: Infinity,
-                  }}
-                  className="bg-[#283142] p-4 rounded-lg text-white text-center"
-                >
-                  Floating Animation
-                </motion.div>
-              </div>
-            </Glow>
-            {/* Color Palette */}
-            <Glow className="p-6 space-y-4">
-              <h2 className="text-xl font-semibold text-white mb-4">
-                Color Palette
-              </h2>
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <div className="h-12 rounded-lg bg-primary" />
-                  <span className="text-sm text-[#FFFFFF80]">Primary</span>
-                </div>
-                <div className="space-y-2">
-                  <div className="h-12 rounded-lg bg-[#283142]" />
-                  <span className="text-sm text-[#FFFFFF80]">Secondary</span>
-                </div>
-                <div className="space-y-2">
-                  <div className="h-12 rounded-lg bg-[#6366F1]" />
-                  <span className="text-sm text-[#FFFFFF80]">Accent</span>
-                </div>
-                <div className="space-y-2">
-                  <div className="h-12 rounded-lg bg-[#DC2626]" />
-                  <span className="text-sm text-[#FFFFFF80]">Danger</span>
-                </div>
-              </div>
-            </Glow>
-
-            {/* Card & Image Section */}
-            <Glow className="p-6 space-y-4">
-              <h2 className="text-xl font-semibold text-white mb-4">
-                Display Components
-              </h2>
-              <Card>
-                <div className="bg-[#283142] p-4 rounded-lg">
-                  <Image
-                    src="/images/logo.svg"
-                    alt="Placeholder"
-                    width={300}
-                    height={200}
-                    className="rounded-lg"
-                  />
-                </div>
-              </Card>
-            </Glow>
-
-            {/* Loading States Section */}
-            <Glow className="p-6 space-y-4">
-              <h2 className="text-xl font-semibold text-white mb-4">
-                Loading States
-              </h2>
-              <div className="space-y-4">
-                <Skeleton className="h-12 w-full" />
-                <Skeleton className="h-12 w-3/4" />
-                <Skeleton className="h-12 w-1/2" />
-              </div>
-            </Glow>
-
-            {/* Modal & OTP Section */}
-            <Glow className="p-6 space-y-4">
-              <h2 className="text-xl font-semibold text-white mb-4">
-                Advanced Components
-              </h2>
-              <div className="space-y-4">
-                <Button onClick={() => setIsModalOpen(true)}>Open Modal</Button>
-                <div className="mt-8">
-                  <h3 className="text-white mb-4">OTP Input</h3>
-                  <Otp />
-                </div>
-              </div>
-            </Glow>
-
-            {/* Toast Notifications */}
-            <Glow className="p-6 space-y-4">
-              <h2 className="text-xl font-semibold text-white mb-4">
-                Toast Notifications
-              </h2>
-              <div className="grid grid-cols-2 gap-4">
-                <Button
-                  variant="default"
-                  onClick={() => toast.success("Success message")}
-                >
-                  Success Toast
-                </Button>
-                <Button
-                  variant="danger"
-                  onClick={() => toast.error("Error message")}
-                >
-                  Error Toast
-                </Button>
-                <Button
-                  variant="primary"
-                  onClick={() => toast.info("Info message")}
-                >
-                  Info Toast
-                </Button>
-                <Button
-                  variant="secondary"
-                  onClick={() => toast.warning("Warning message")}
-                >
-                  Warning Toast
-                </Button>
-              </div>
-            </Glow>
-
-            {/* Typography */}
-            <Glow className="p-6 space-y-4">
-              <h2 className="text-xl font-semibold text-white mb-4">
-                Typography
-              </h2>
-              <div className="space-y-6">
-                <div>
-                  <h1 className="text-4xl font-geistSans font-bold text-white">
-                    Heading 1
-                  </h1>
-                  <p className="text-[#FFFFFF80] text-sm">
-                    Font: Geist Sans Bold - 36px
+                <div className="absolute inset-0 bg-gradient-to-b from-vultisig-turquoise/5 to-vultisig-persian/5 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                <div className="relative z-10">
+                  <div className="text-4xl mb-6">{feature.icon}</div>
+                  <h3 className="text-xl font-semibold mb-4 text-white group-hover:text-vultisig-turquoise transition-colors">
+                    {feature.title}
+                  </h3>
+                  <p className="text-gray-400 leading-relaxed">
+                    {feature.description}
                   </p>
                 </div>
-                <div>
-                  <h2 className="text-3xl font-geistSans font-semibold text-white">
-                    Heading 2
-                  </h2>
-                  <p className="text-[#FFFFFF80] text-sm">
-                    Font: Geist Sans Semibold - 30px
-                  </p>
-                </div>
-                <div>
-                  <p className="text-base font-geistSans text-white">
-                    Regular paragraph text with Geist Sans
-                  </p>
-                  <p className="text-[#FFFFFF80] text-sm">
-                    Font: Geist Sans Regular - 16px
-                  </p>
-                </div>
-                <div>
-                  <p className="font-geistMono text-white">
-                    Monospace text with Geist Mono
-                  </p>
-                  <p className="text-[#FFFFFF80] text-sm">
-                    Font: Geist Mono - 16px
-                  </p>
-                </div>
-              </div>
-            </Glow>
-
-            {/* Gradients */}
-            <Glow className="p-6 space-y-4">
-              <h2 className="text-xl font-semibold text-white mb-4">
-                Gradients
-              </h2>
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <div className="h-20 rounded-lg bg-gradient-to-r from-primary to-[#6366F1]" />
-                  <span className="text-sm text-[#FFFFFF80]">
-                    Primary Gradient
-                  </span>
-                </div>
-                <div className="space-y-2">
-                  <div className="h-20 rounded-lg bg-gradient-to-r from-[#DC2626] to-[#EA580C]" />
-                  <span className="text-sm text-[#FFFFFF80]">
-                    Danger Gradient
-                  </span>
-                </div>
-                <div className="space-y-2">
-                  <div className="h-20 rounded-lg bg-gradient-to-r from-[#283142] to-[#1A202B]" />
-                  <span className="text-sm text-[#FFFFFF80]">
-                    Background Gradient
-                  </span>
-                </div>
-                <div className="space-y-2">
-                  <div className="h-20 rounded-lg bg-gradient-to-r from-[#059669] to-[#10B981]" />
-                  <span className="text-sm text-[#FFFFFF80]">
-                    Success Gradient
-                  </span>
-                </div>
-              </div>
-            </Glow>
+              </motion.div>
+            ))}
           </div>
         </div>
+      </section>
 
-        {/* Modal */}
-        <Modal
-          isOpen={isModalOpen}
-          onClose={() => setIsModalOpen(false)}
-          title="Modal Example"
-        >
-          <div className="space-y-4">
-            <p className="text-white">
-              This is an example modal that showcases the Modal component.
+      {/* CTA Section */}
+      <section className="relative py-32 overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-vultisig-bg-secondary/50 to-transparent"></div>
+
+        <div className="container mx-auto px-4 relative z-10">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8 }}
+            className="max-w-4xl mx-auto text-center"
+          >
+            <h2 className="text-5xl font-bold mb-8">
+              Ready to Secure Your Future?
+            </h2>
+            <p className="text-xl text-gray-400 mb-12">
+              Join the next generation of secure asset management. Start your
+              journey today.
             </p>
-            <Button
-              variant="primary"
-              onClick={() => setIsModalOpen(false)}
-              className="w-full"
-            >
-              Close Modal
-            </Button>
-          </div>
-        </Modal>
-      </div>
-      <footer className="mt-16 text-center text-[#FFFFFF80]">
-        <p>Built with Next.js, Tailwind CSS, and TypeScript</p>
-        <p className="mt-2">© {new Date().getFullYear()} Victorola</p>
-      </footer>
-    </Animation>
+            <button className="group relative px-12 py-5 bg-gradient-to-r from-vultisig-turquoise to-vultisig-persian rounded-xl overflow-hidden">
+              <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300"></div>
+              <span className="relative text-vultisig-bg-primary font-semibold text-xl">
+                Try Vultisig Now
+              </span>
+            </button>
+          </motion.div>
+        </div>
+      </section>
+    </main>
   );
 }
+
+const features = [
+  {
+    icon: "🛡️",
+    title: "Military-Grade Security",
+    description:
+      "Advanced encryption and multi-signature protocols ensure your assets remain protected at all times.",
+  },
+  {
+    icon: "⚡",
+    title: "Lightning Fast",
+    description:
+      "Optimized performance with near-instant transaction processing and real-time synchronization.",
+  },
+  {
+    icon: "🤝",
+    title: "Smart Collaboration",
+    description:
+      "Seamlessly manage shared wallets and coordinate with team members or organizations.",
+  },
+];
+
+const trustStats = [
+  {
+    value: "$10B+",
+    label: "Assets Secured",
+  },
+  {
+    value: "50K+",
+    label: "Active Users",
+  },
+  {
+    value: "99.99%",
+    label: "Uptime",
+  },
+  {
+    value: "24/7",
+    label: "Support",
+  },
+];
